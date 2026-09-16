@@ -1,87 +1,37 @@
-# Xen Budget Tracker — Full Stack
-## Live Demo
-https://xen-budget-production.up.railway.app/
+# Xen-Budgetier
 
-A cyberpunk-themed budget tracker with PostgreSQL backend, JWT auth, and Railway deployment.
+A beautiful, glassmorphic personal finance and budget tracking dashboard built entirely as a client-side application. It runs 100% offline in your browser using local storage—meaning no backend, no databases, and no installations are required.
 
-## Project Structure
+## Features
+
+- **Privacy-First & Offline**: All your financial data is saved locally on your device via `localStorage`. No data ever leaves your browser.
+- **Glassmorphic Design System**: A meticulously crafted UI featuring a warm, earthy palette (olive greens, caramel browns, beige), soft layered shadows, and ambient mesh gradients.
+- **Interactive Analytics**: Dynamic, responsive charts (via Chart.js) that adapt to the theme and automatically recalculate as you log expenses.
+- **Category Management**: Edit, add, and remove categories and sub-categories to tailor the tracker to your specific spending habits.
+- **Mobile Optimized**: A robust bottom-navigation layout, iOS safe-area integrations, and touch-friendly targets ensure the app looks and feels like a native mobile app.
+- **Fluid View Transitions**: Seamless ripple animations when toggling between dark and light modes, powered by the View Transitions API.
+
+## File Structure
+
+The entire application architecture is intentionally minimal, consisting of exactly three core files:
 
 ```
-xen-budget/
-├── server.js           # Express API server
-├── schema.sql          # PostgreSQL schema (run once)
-├── package.json
-├── railway.toml        # Railway deployment config
-├── .env.example        # Environment variables template
-└── public/
-    ├── index.html      # App HTML (auth + tracker screens)
-    ├── css/
-    │   └── style.css   # All styles
-    └── js/
-        ├── auth.js     # Login / signup / logout
-        └── app.js      # Budget tracker logic (API-driven)
+xen-budgetier/
+├── index.html     # Semantic HTML structure, SVG icons, and modal templates
+├── style.css      # Vanilla CSS, glassmorphism design system, mobile media queries
+├── script.js      # Vanilla JavaScript for state management, localStorage logic, and Chart.js integration
+└── README.md      # You are here
 ```
 
-## Local Development
+## Tech Stack
 
-```bash
-npm install
+- **HTML5**: Semantic layout and structuring.
+- **CSS3**: Custom properties (variables), Flexbox/Grid, and modern media queries. Zero CSS frameworks (no Tailwind, Bootstrap, etc.).
+- **Vanilla JavaScript (ES6+)**: Handles all application logic, DOM manipulation, and state persistence. No frameworks (no React, Vue, Node.js).
+- **Chart.js (via CDN)**: For rendering the daily bar charts, budget donuts, and cumulative trend lines.
 
-# Set up .env (copy from .env.example and fill in values)
-cp .env.example .env
+## How to Run
 
-# Create the DB tables (run once against your Postgres)
-psql $DATABASE_URL < schema.sql
-
-npm run dev   # uses nodemon
-```
-
-## Deploy to Railway
-
-### 1. Create Railway project
-```bash
-railway login
-railway init
-```
-
-### 2. Add PostgreSQL plugin
-In Railway dashboard → your project → **+ New** → **Database** → **PostgreSQL**.
-
-### 3. Set environment variables
-In Railway dashboard → your service → **Variables**:
-
-| Key | Value |
-|-----|-------|
-| `JWT_SECRET` | Any long random string (32+ chars) |
-| `NODE_ENV` | `production` |
-| `DATABASE_URL` | Auto-set by Railway when Postgres is linked |
-
-### 4. Run schema
-In Railway dashboard → your Postgres service → **Connect** → copy the connection URL, then:
-```bash
-psql "your-railway-postgres-url" < schema.sql
-```
-Or use the Railway shell.
-
-### 5. Deploy
-```bash
-railway up
-```
-
-## API Endpoints
-
-| Method | Path | Auth | Description |
-|--------|------|------|-------------|
-| POST | `/api/auth/signup` | — | Register |
-| POST | `/api/auth/login` | — | Login |
-| POST | `/api/auth/logout` | — | Logout |
-| GET | `/api/auth/me` | ✓ | Current user |
-| GET | `/api/categories` | ✓ | List categories |
-| POST | `/api/categories` | ✓ | Add category |
-| PATCH | `/api/categories/:id` | ✓ | Rename category |
-| DELETE | `/api/categories/:id` | ✓ | Delete category |
-| GET | `/api/budget?month=&year=` | ✓ | Get monthly budget |
-| PUT | `/api/budget` | ✓ | Set monthly budget |
-| GET | `/api/expenses?month=&year=` | ✓ | List expenses |
-| POST | `/api/expenses` | ✓ | Add expense |
-| DELETE | `/api/expenses/:id` | ✓ | Delete expense |
+1. Clone or download this repository to your local machine.
+2. Double-click the `index.html` file to open it in your default web browser.
+3. Start tracking your budget!
