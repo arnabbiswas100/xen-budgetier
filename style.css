@@ -504,7 +504,7 @@ h3 { font-size: 1.1rem; }
   margin-bottom: 24px;
 }
 
-.hero-left { flex: 1; }
+.hero-left { flex: 1; min-width: 0; }
 
 .hero-label {
   font-size: 0.72rem;
@@ -551,7 +551,7 @@ h3 { font-size: 1.1rem; }
   box-shadow: var(--sh-lg), 0 0 20px var(--ol-g);
 }
 
-.hero-sub-row { display: flex; align-items: center; gap: 20px; }
+.hero-sub-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
 
 .hero-sub-stat { display: flex; flex-direction: column; gap: 2px; }
 
@@ -1891,12 +1891,22 @@ body { min-height: 100dvh; }
   .budget-hero {
     padding: 22px 18px 20px;
     border-radius: var(--rad-lg);
+    /* Lift overflow:hidden so the donut isn't clipped at the right edge */
+    overflow: visible;
   }
-  .hero-top { gap: 16px; }
+  /* The decorative blobs are clipped by the border-radius now — contain them */
+  .budget-hero::before,
+  .budget-hero::after { border-radius: var(--rad-lg); }
+
+  .hero-top { gap: 12px; align-items: flex-start; }
+  /* Donut: smaller + guaranteed space inside the card */
+  .hero-right { flex-shrink: 0; padding-right: 2px; }
+  .circular-progress-wrap { width: 76px; height: 76px; }
+  .donut-center-text span { font-size: 0.9rem; }
+  .donut-center-text small { font-size: 0.55rem; }
+
   .hero-amount { font-size: 2.2rem; letter-spacing: -1px; }
-  .circular-progress-wrap { width: 84px; height: 84px; }
-  .donut-center-text span { font-size: 1rem; }
-  .hero-sub-row { gap: 14px; }
+  .hero-sub-row { gap: 10px; flex-wrap: wrap; }
   .sub-val { font-size: 1.25rem; }
   .edit-budget-btn { padding: 5px 13px; font-size: 0.76rem; }
 
