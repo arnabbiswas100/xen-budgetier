@@ -6,7 +6,7 @@ A beautiful, glassmorphic personal finance and budget tracking application desig
 
 ## Key Features
 
-- **100% Offline & Private**: All data is saved on the user's device using local storage (`xen_budgetier_*`). No data ever leaves the phone or browser.
+- **100% Offline & Private**: All data is saved on the user's device using local storage (`budgetier_*`). No data ever leaves the phone or browser.
 - **Packaged for Android (Capacitor Ready)**: Bundles native web assets (`index.html`, `style.css`, `script.js`, `chart.umd.min.js`) into a signed Android APK.
 - **Smart Budget Carryover**: Seamlessly carries forward the previous month's budget when a new month begins.
 - **Daily Budget Recommendations**: Dynamically calculates how much you can spend per day to stay on track throughout the month.
@@ -21,7 +21,7 @@ A beautiful, glassmorphic personal finance and budget tracking application desig
 ## File Structure
 
 ```
-xen-budgetier/
+budgetier/
 ├── index.html         # Application shell, navigation, modals, and templates
 ├── style.css          # Glassmorphism design tokens, CSS variables, mobile layouts
 ├── script.js          # App state, calculations, insights, Chart.js integrations
