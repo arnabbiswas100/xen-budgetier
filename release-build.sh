@@ -18,14 +18,8 @@ if [ -f "my-release-key.jks" ] || [ -f "app/my-release-key.jks" ]; then
   echo "Release keystore detected. Building signed Release APK..."
   ./gradlew assembleRelease
   echo "Release APK ready at: android/app/build/outputs/apk/release/app-release.apk"
-  cp app/build/outputs/apk/release/app-release.apk ../Budgetier-v1.0.7.apk
-  cp app/build/outputs/apk/release/app-release.apk ../Budgetier-v1.0.6.apk
-  cp app/build/outputs/apk/release/app-release.apk ../Budgetier-v1.0.5.apk
-  cp app/build/outputs/apk/release/app-release.apk ../Budgetier-v1.0.4.apk
-  cp app/build/outputs/apk/release/app-release.apk ../Budgetier-v1.0.3.apk
-  cp app/build/outputs/apk/release/app-release.apk ../Budgetier-v1.0.2.apk
-  cp app/build/outputs/apk/release/app-release.apk ../Budgetier-v1.0.1.apk
-  echo "Versioned APK ready at: Budgetier-v1.0.7.apk"
+  cp app/build/outputs/apk/release/app-release.apk ../Budgetier.apk
+  echo "Release APK ready at: Budgetier.apk"
 else
   echo "No keystore detected. Building Debug APK for testing..."
   ./gradlew assembleDebug
