@@ -12,3 +12,4 @@ android/app/release/
 *.keystore
 
 *.apk
+*.aab
