@@ -1,5 +1,5 @@
 {
-  "appId": "com.xen.budgetier",
+  "appId": "com.budgetier.app",
   "appName": "Budgetier",
   "webDir": "www",
   "bundledWebRuntime": false,

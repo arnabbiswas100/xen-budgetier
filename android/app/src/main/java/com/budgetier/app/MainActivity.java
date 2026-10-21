@@ -1,4 +1,4 @@
-package com.xen.budgetier;
+package com.budgetier.app;
 
 import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;

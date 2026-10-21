@@ -39,14 +39,14 @@ To package Budgetier as a standalone offline Android app:
 ```bash
 npm init -y
 npm install @capacitor/core @capacitor/cli @capacitor/android
-npx cap init "Budgetier" "com.xen.budgetier" --web-dir .
+npx cap init "Budgetier" "com.budgetier.app" --web-dir .
 npx cap add android
 ```
 
 ### 2. Configure `capacitor.config.json`
 ```json
 {
-  "appId": "com.xen.budgetier",
+  "appId": "com.budgetier.app",
   "appName": "Budgetier",
   "webDir": ".",
   "bundledWebRuntime": false

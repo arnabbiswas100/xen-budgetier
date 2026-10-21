@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.xen.budgetier"
+    namespace = "com.budgetier.app"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.xen.budgetier"
+        applicationId "com.budgetier.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 8
@@ -20,7 +20,7 @@ android {
         release {
             storeFile file('my-release-key.jks')
             storePassword 'xenbudgetier123'
-            keyAlias 'xen-budgetier'
+            keyAlias 'budgetier'
             keyPassword 'xenbudgetier123'
         }
     }
