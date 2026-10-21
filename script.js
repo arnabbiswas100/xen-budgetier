@@ -60,7 +60,7 @@ let state = {
   categories: JSON.parse(JSON.stringify(DEFAULT_CATEGORIES)),
   categoryBudgets: {},   // { "Food": 5000, ... }
   currency: '₹',
-  theme: 'dark',
+  theme: 'light',
   currentMonth: '',      // "YYYY-MM"
 };
 
@@ -122,7 +122,7 @@ function loadData() {
     if (prefs) {
       const p = JSON.parse(prefs);
       state.currency     = p.currency     || '₹';
-      state.theme        = p.theme        || 'dark';
+      state.theme        = p.theme        || 'light';
       state.currentMonth = p.currentMonth || todayMonthKey();
     } else {
       state.currentMonth = todayMonthKey();
@@ -2230,7 +2230,7 @@ function init() {
   setTimeout(() => {
     if (window.AndroidBridge && typeof window.AndroidBridge.setStatusBarTheme === 'function') {
       try {
-        window.AndroidBridge.setStatusBarTheme(state.theme || 'dark');
+        window.AndroidBridge.setStatusBarTheme(state.theme || 'light');
       } catch (e) {}
     }
   }, 150);
