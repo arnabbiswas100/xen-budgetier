@@ -1,0 +1,12 @@
+{
+  "appId": "com.xen.budgetier",
+  "appName": "Budgetier",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#0c0906"
+  }
+}

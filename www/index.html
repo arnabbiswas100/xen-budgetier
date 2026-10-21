@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <!-- Mobile / PWA meta -->
+  <meta name="theme-color" content="#0c0906" id="theme-color-meta" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="description" content="Budgetier — Personal finance and budget tracker. Set budgets, log daily expenses, and gain financial insights." />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;" />
+  <title>Budgetier — Personal Finance Dashboard</title>
+  <link rel="icon" type="image/png" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-512.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ===== TOP NAV ===== -->
+<header class="top-nav" role="banner">
+  <div class="nav-brand">
+    <span class="nav-title">Budgetier</span>
+  </div>
+  <nav class="nav-tabs" role="navigation" aria-label="Main navigation">
+    <button class="nav-tab active" data-tab="dashboard" id="tab-dashboard">Dashboard</button>
+    <button class="nav-tab" data-tab="expenses" id="tab-expenses">Expenses</button>
+    <button class="nav-tab" data-tab="analytics" id="tab-analytics">Analytics</button>
+    <button class="nav-tab" data-tab="settings" id="tab-settings">Settings</button>
+  </nav>
+  <div class="nav-actions">
+    <button class="icon-btn" id="theme-toggle" aria-label="Toggle dark/light mode" title="Toggle theme">
+      <span class="theme-icon">🌙</span>
+    </button>
+    <button class="btn btn-primary nav-add-btn" id="add-expense-btn" aria-label="Add new expense">
+      <span class="nav-add-icon" aria-hidden="true">+</span>
+      Add Expense
+    </button>
+  </div>
+</header>
+
+<!-- ===== MONTH NAVIGATOR ===== -->
+<div class="month-bar" role="region" aria-label="Month navigation">
+  <button class="month-nav-btn" id="prev-month" aria-label="Previous month">&#8249;</button>
+  <div class="month-display">
+    <span id="current-month-label">September 2026</span>
+    <span class="month-badge" id="month-badge">Current</span>
+  </div>
+  <button class="month-nav-btn" id="next-month" aria-label="Next month">&#8250;</button>
+  <button class="btn btn-ghost btn-sm" id="go-to-today" style="margin-left:auto">Today</button>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="main-content" role="main">
+
+  <!-- ==================== DASHBOARD TAB ==================== -->
+  <section class="tab-panel active" id="panel-dashboard" aria-labelledby="tab-dashboard">
+
+    <!-- Budget Hero -->
+    <div class="budget-hero" id="budget-hero">
+      <div class="hero-top">
+        <div class="hero-left">
+          <p class="hero-label">Remaining</p>
+          <div class="hero-budget-row">
+            <h1 class="hero-amount positive" id="hero-remaining">₹0</h1>
+          </div>
+          <div class="hero-sub-row">
+            <span class="hero-sub-stat">
+              <span class="sub-label">Spent</span>
+              <span class="sub-val negative" id="hero-spent">₹0</span>
+            </span>
+            <span class="hero-divider" aria-hidden="true">·</span>
+            <span class="hero-sub-stat">
+              <span class="sub-label">Monthly Budget</span>
+              <span class="sub-val" id="hero-budget">₹0</span>
+            </span>
+            <button class="edit-budget-btn" id="edit-budget-btn" aria-label="Edit monthly budget">Edit</button>
+          </div>
+        </div>
+        <div class="hero-right">
+          <div class="circular-progress-wrap">
+            <canvas id="budget-donut" width="120" height="120" aria-label="Budget usage donut chart" role="img"></canvas>
+            <div class="donut-center-text">
+              <span id="donut-pct">0%</span>
+              <small>used</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="progress-bar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Budget consumed">
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="budget-progress-fill"></div>
+        </div>
+        <span class="progress-pct-label" id="progress-pct-label">0% of budget used</span>
+      </div>
+    </div>
+
+    <!-- Key Metrics Strip -->
+    <div class="metrics-strip" role="region" aria-label="Key financial metrics">
+      <div class="metric-card" id="metric-daily-avg">
+        <p class="metric-label">Daily Avg Spent</p>
+        <p class="metric-value" id="val-daily-avg">₹0</p>
+        <p class="metric-sub" id="sub-daily-avg">based on 0 days</p>
+      </div>
+      <div class="metric-card" id="metric-daily-rec">
+        <p class="metric-label">Recommended / Day</p>
+        <p class="metric-value green" id="val-daily-rec">₹0</p>
+        <p class="metric-sub" id="sub-daily-rec">0 days remaining</p>
+      </div>
+      <div class="metric-card" id="metric-projected">
+        <p class="metric-label">Projected End Balance</p>
+        <p class="metric-value" id="val-projected">₹0</p>
+        <p class="metric-sub">estimated projection</p>
+      </div>
+      <div class="metric-card" id="metric-txn-count">
+        <p class="metric-label">Transactions</p>
+        <p class="metric-value" id="val-txn-count">0</p>
+        <p class="metric-sub" id="sub-txn-count">this month</p>
+      </div>
+    </div>
+
+    <!-- Month-End Summary Banner (shown for past months) -->
+    <div class="month-summary-banner hidden" id="month-summary-banner" role="region" aria-label="Month-end summary">
+      <h2 class="section-title">Month-End Summary</h2>
+      <div class="summary-grid" id="summary-grid"></div>
+    </div>
+
+    <!-- Dashboard Sections Split (2-col grid on tablet/desktop, stacked on mobile) -->
+    <div class="dashboard-sections-split">
+      <!-- Insights -->
+      <div class="insights-section" role="region" aria-label="Financial insights">
+        <h2 class="section-title">Insights</h2>
+        <ul class="insights-list" id="insights-list">
+          <li class="insight-item insight-neutral">Add your budget and start tracking to see insights.</li>
+        </ul>
+      </div>
+
+      <!-- Category Analysis -->
+      <div class="category-section" role="region" aria-label="Spending by category">
+        <div class="section-header">
+          <h2 class="section-title">Spending by Category</h2>
+          <button class="btn btn-ghost btn-sm" id="manage-cat-budgets-btn">Manage Limits</button>
+        </div>
+        <div class="category-list" id="category-list">
+          <p class="empty-state">No expenses yet. Add an expense to see category breakdown.</p>
+        </div>
+      </div>
+
+      <!-- Daily Heatmap -->
+      <div class="daily-section" role="region" aria-label="Daily spending heatmap">
+        <h2 class="section-title">Daily Spending</h2>
+        <div class="heatmap-wrap" id="heatmap-wrap">
+          <p class="empty-state">No expenses for this month yet.</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+  <!-- /DASHBOARD TAB -->
+
+  <!-- ==================== EXPENSES TAB ==================== -->
+  <section class="tab-panel" id="panel-expenses" aria-labelledby="tab-expenses">
+
+    <div class="expenses-toolbar" role="search" aria-label="Expense filters">
+      <input type="search" id="search-input" class="search-input" placeholder="Search expenses…" aria-label="Search expenses" />
+      <select id="filter-category" class="filter-select" aria-label="Filter by category">
+        <option value="">All Categories</option>
+      </select>
+      <select id="sort-select" class="filter-select" aria-label="Sort expenses">
+        <option value="date-desc">Newest First</option>
+        <option value="date-asc">Oldest First</option>
+        <option value="amount-desc">Highest Amount</option>
+        <option value="amount-asc">Lowest Amount</option>
+      </select>
+      <button class="btn btn-ghost btn-sm" id="clear-filters-btn">Clear</button>
+    </div>
+
+    <div class="expenses-table-wrap" role="region" aria-label="Expense records">
+      <table class="expenses-table" id="expenses-table" aria-label="Expense records table">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Category</th>
+            <th scope="col">Sub-category</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Note</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="expenses-tbody">
+          <tr class="empty-row"><td colspan="7"><p class="empty-state">No expenses recorded for this month.</p></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Mobile card view (shown on small screens) -->
+    <div class="expense-cards" id="expense-cards" role="list" aria-label="Expense cards"></div>
+
+    <div class="expenses-footer" role="contentinfo" aria-label="Expense totals">
+      <span id="expense-count-label">0 records</span>
+      <span class="footer-total">Total: <strong id="footer-total">₹0</strong></span>
+    </div>
+
+  </section>
+  <!-- /EXPENSES TAB -->
+
+  <!-- ==================== ANALYTICS TAB ==================== -->
+  <section class="tab-panel" id="panel-analytics" aria-labelledby="tab-analytics">
+
+    <div class="analytics-grid">
+
+      <div class="chart-card chart-half" role="region" aria-label="Spending by category pie chart">
+        <h3 class="chart-title">Spending by Category</h3>
+        <div class="chart-wrap">
+          <canvas id="chart-category" aria-label="Category donut chart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card chart-half" role="region" aria-label="Budget vs spent comparison">
+        <h3 class="chart-title">Budget vs Spent</h3>
+        <div class="chart-wrap">
+          <canvas id="chart-budget-vs" aria-label="Budget vs spent bar chart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card chart-full" role="region" aria-label="Daily spending bar chart">
+        <h3 class="chart-title">Daily Spending</h3>
+        <div class="chart-wrap chart-wrap-tall">
+          <canvas id="chart-daily" aria-label="Daily spending bar chart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card chart-full" role="region" aria-label="Cumulative spending trend line chart">
+        <h3 class="chart-title">Spending Trend (Cumulative)</h3>
+        <div class="chart-wrap chart-wrap-tall">
+          <canvas id="chart-trend" aria-label="Cumulative spending trend line chart"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+  <!-- /ANALYTICS TAB -->
+
+  <!-- ==================== SETTINGS TAB ==================== -->
+  <section class="tab-panel" id="panel-settings" aria-labelledby="tab-settings">
+
+    <div class="settings-grid">
+
+      <div class="settings-card">
+        <h3 class="settings-card-title">Categories</h3>
+        <p class="settings-desc">Add or remove spending categories and sub-categories.</p>
+        <div class="cat-manage-wrap" id="cat-manage-wrap"></div>
+        <div class="cat-add-row">
+          <input type="text" id="new-category-input" class="text-input" placeholder="New category name…" aria-label="New category name" />
+          <button class="btn btn-primary btn-sm" id="add-category-btn">Add</button>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <h3 class="settings-card-title">Currency</h3>
+        <p class="settings-desc">Symbol used throughout the app.</p>
+        <div class="setting-row">
+          <label for="currency-symbol" class="setting-label">Currency Symbol</label>
+          <input type="text" id="currency-symbol" class="text-input small-input" maxlength="5" value="₹" aria-label="Currency symbol" />
+        </div>
+        <button class="btn btn-primary btn-sm" id="save-currency-btn">Save</button>
+      </div>
+
+      <div class="settings-card">
+        <h3 class="settings-card-title">Recurring Expenses</h3>
+        <p class="settings-desc">Mark expenses that repeat monthly.</p>
+        <div id="recurring-list"></div>
+        <button class="btn btn-ghost btn-sm" id="apply-recurring-btn">Apply Recurring to This Month</button>
+      </div>
+
+      <div class="settings-card danger-zone">
+        <h3 class="settings-card-title danger-title">Data Management</h3>
+        <p class="settings-desc">Export, import, or clear your local data.</p>
+        <div class="data-btn-row">
+          <button class="btn btn-ghost btn-sm" id="export-json-btn">Export JSON (Full Backup)</button>
+          <button class="btn btn-ghost btn-sm" id="export-csv-btn">Export Month (CSV)</button>
+          <label class="btn btn-ghost btn-sm" for="import-file-input" style="cursor:pointer">Import JSON</label>
+          <input type="file" id="import-file-input" accept=".json" style="display:none" aria-label="Import JSON file" />
+        </div>
+        <button class="btn btn-danger btn-sm" id="clear-data-btn" style="margin-top:12px">🗑 Clear All Data</button>
+      </div>
+
+    </div>
+
+  </section>
+  <!-- /SETTINGS TAB -->
+
+</main>
+
+<!-- ===== MODALS ===== -->
+
+<!-- Add / Edit Expense Modal -->
+<div class="modal-overlay hidden" id="expense-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="expense-modal-title">
+  <div class="modal" id="expense-modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="expense-modal-title">Add Expense</h2>
+      <button class="modal-close" id="expense-modal-close" aria-label="Close modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="expense-form" novalidate>
+        <input type="hidden" id="expense-id" />
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="expense-date">Date <span aria-hidden="true">*</span></label>
+            <input type="date" id="expense-date" class="text-input" required aria-required="true" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="expense-amount">Amount (<span class="currency-label-sym">₹</span>) <span aria-hidden="true">*</span></label>
+            <input type="number" id="expense-amount" class="text-input" placeholder="0" min="0" step="0.01" inputmode="decimal" required aria-required="true" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="expense-category">Category <span aria-hidden="true">*</span></label>
+            <select id="expense-category" class="text-input" required aria-required="true"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="expense-subcategory">Sub-category</label>
+            <input type="text" id="expense-subcategory" class="text-input" placeholder="e.g. Lunch" list="subcategory-datalist" aria-label="Sub-category" />
+            <datalist id="subcategory-datalist"></datalist>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="expense-note">Note</label>
+          <input type="text" id="expense-note" class="text-input" placeholder="Optional note…" aria-label="Optional note" />
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="expense-recurring" />
+            <span>Mark as recurring (monthly)</span>
+          </label>
+        </div>
+
+        <div class="form-hint hidden" id="rec-daily-hint" role="note"></div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="cancel-expense-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="save-expense-btn">Save Expense</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Budget Modal -->
+<div class="modal-overlay hidden" id="budget-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="budget-modal-title">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h2 class="modal-title" id="budget-modal-title">Set Monthly Budget</h2>
+      <button class="modal-close" id="budget-modal-close" aria-label="Close modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="budget-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="budget-input">Budget Amount (<span class="currency-label-sym">₹</span>)</label>
+          <input type="number" id="budget-input" class="text-input" placeholder="e.g. 20000" min="0" step="1" inputmode="decimal" aria-label="Monthly budget amount" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="cancel-budget-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Set Budget</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Category Budget Limits Modal -->
+<div class="modal-overlay hidden" id="cat-budget-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cat-budget-modal-title">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="cat-budget-modal-title">Category Spending Limits</h2>
+      <button class="modal-close" id="cat-budget-modal-close" aria-label="Close modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="settings-desc" style="margin-bottom:16px">Set optional spending limits per category. Leave blank for no limit.</p>
+      <div id="cat-budget-list"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="cancel-cat-budget-btn">Cancel</button>
+        <button type="button" class="btn btn-primary" id="save-cat-budgets-btn">Save Limits</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Dialog -->
+<div class="modal-overlay hidden" id="confirm-overlay" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h2 class="modal-title" id="confirm-title">Confirm</h2>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-message"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="confirm-cancel">Cancel</button>
+        <button class="btn btn-danger" id="confirm-ok">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<!-- Floating Action Button (desktop + tablet) -->
+<button class="fab" id="fab-add-expense" aria-label="Add new expense">
+  <span class="fab-icon" aria-hidden="true">+</span>
+  <span class="fab-label">Add Expense</span>
+  <span class="fab-pulse" aria-hidden="true"></span>
+</button>
+
+<!-- Mobile Bottom Navigation -->
+<nav class="mobile-bottom-nav" id="mobile-bottom-nav" role="navigation" aria-label="Mobile navigation">
+  <button class="mbn-btn active" data-tab="dashboard" id="mbn-dashboard" aria-label="Dashboard">
+    <span class="mbn-icon-wrap">
+      <svg class="mbn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/>
+        <rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/>
+      </svg>
+    </span>
+    <span class="mbn-label">Home</span>
+  </button>
+  <button class="mbn-btn" data-tab="expenses" id="mbn-expenses" aria-label="Expenses">
+    <span class="mbn-icon-wrap">
+      <svg class="mbn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+        <circle cx="3" cy="6" r="0.8" fill="currentColor"/><circle cx="3" cy="12" r="0.8" fill="currentColor"/><circle cx="3" cy="18" r="0.8" fill="currentColor"/>
+      </svg>
+    </span>
+    <span class="mbn-label">Expenses</span>
+  </button>
+  <button class="mbn-btn mbn-add-btn" id="mbn-add-btn" aria-label="Add expense">
+    <svg class="mbn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true">
+      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+  </button>
+  <button class="mbn-btn" data-tab="analytics" id="mbn-analytics" aria-label="Analytics">
+    <span class="mbn-icon-wrap">
+      <svg class="mbn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+        <line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/>
+      </svg>
+    </span>
+    <span class="mbn-label">Analytics</span>
+  </button>
+  <button class="mbn-btn" data-tab="settings" id="mbn-settings" aria-label="Settings">
+    <span class="mbn-icon-wrap">
+      <svg class="mbn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </span>
+    <span class="mbn-label">Settings</span>
+  </button>
+</nav>
+
+<!-- Category Edit Modal -->
+<div class="modal-overlay hidden" id="cat-edit-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cat-edit-modal-title">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="cat-edit-modal-title">Edit Category</h2>
+      <button class="modal-close" id="cat-edit-modal-close" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label" for="edit-cat-name">Category Name <span aria-hidden="true">*</span></label>
+        <input type="text" id="edit-cat-name" class="text-input" placeholder="Category name…" aria-label="Category name" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Sub-categories</label>
+        <div class="subcat-edit-list" id="subcat-edit-list"></div>
+        <div class="cat-add-row" style="margin-top:8px">
+          <input type="text" id="new-subcat-input" class="text-input" placeholder="New sub-category…" aria-label="New sub-category" />
+          <button class="btn btn-primary btn-sm" id="add-subcat-btn">Add</button>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="cancel-cat-edit-btn">Cancel</button>
+        <button class="btn btn-primary" id="save-cat-edit-btn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
+

@@ -1,41 +1,80 @@
-# Xen-Budgetier
+# Budgetier
 
-A beautiful, glassmorphic personal finance and budget tracking dashboard built entirely as a client-side application. It runs 100% offline in your browser using local storage—meaning no backend, no databases, and no installations are required.
+A beautiful, glassmorphic personal finance and budget tracking application designed for students and everyday budgeting. Built with 100% client-side technologies, it operates completely offline with zero backend, zero trackers, and zero cloud lock-in.
 
-## Features
+---
 
-- **Privacy-First & Offline**: All your financial data is saved locally on your device via `localStorage`. No data ever leaves your browser.
-- **Glassmorphic Design System**: A meticulously crafted UI featuring a warm, earthy palette (olive greens, caramel browns, beige), soft layered shadows, and ambient mesh gradients.
-- **Interactive Analytics**: Dynamic, responsive charts (via Chart.js) that adapt to the theme and automatically recalculate as you log expenses.
-- **Category Management**: Edit, add, and remove categories and sub-categories to tailor the tracker to your specific spending habits.
-- **Mobile Optimized**: A robust bottom-navigation layout, iOS safe-area integrations, and touch-friendly targets ensure the app looks and feels like a native mobile app.
-- **Fluid View Transitions**: Seamless ripple animations when toggling between dark and light modes, powered by the View Transitions API.
+## Key Features
+
+- **100% Offline & Private**: All data is saved on the user's device using local storage (`xen_budgetier_*`). No data ever leaves the phone or browser.
+- **Packaged for Android (Capacitor Ready)**: Bundles native web assets (`index.html`, `style.css`, `script.js`, `chart.umd.min.js`) into a signed Android APK.
+- **Smart Budget Carryover**: Seamlessly carries forward the previous month's budget when a new month begins.
+- **Daily Budget Recommendations**: Dynamically calculates how much you can spend per day to stay on track throughout the month.
+- **Undo for Deleted Expenses**: Accidentally delete a record? Restore it with a single tap via the Undo toast notification.
+- **Recurring Expenses Management**: Set recurring bills and stop rules anytime directly from Settings.
+- **Category & Sub-Category Limits**: Custom category budgets with real-time progress bars and overspending alerts.
+- **Warm Glassmorphic UI**: Earthy palette (olive greens, caramel browns, sage, cream), fluid animations, dark/light theme ripple transitions, and mobile bottom sheet modals.
+- **Full Data Portability**: Export/import complete JSON backups with validation, plus formula-safe CSV exports for spreadsheet analysis.
+
+---
 
 ## File Structure
 
-The entire application architecture is intentionally minimal, consisting of exactly three core files:
-
 ```
 xen-budgetier/
-├── index.html     # Semantic HTML structure, SVG icons, and modal templates
-├── style.css      # Vanilla CSS, glassmorphism design system, mobile media queries
-├── script.js      # Vanilla JavaScript for state management, localStorage logic, and Chart.js integration
-└── README.md      # You are here
+├── index.html         # Application shell, navigation, modals, and templates
+├── style.css          # Glassmorphism design tokens, CSS variables, mobile layouts
+├── script.js          # App state, calculations, insights, Chart.js integrations
+├── chart.umd.min.js   # Bundled Chart.js v4.4.0 (local offline chart engine)
+└── README.md          # Documentation and build instructions
 ```
 
-## Tech Stack
+---
 
-- **HTML5**: Semantic layout and structuring.
-- **CSS3**: Custom properties (variables), Flexbox/Grid, and modern media queries. Zero CSS frameworks (no Tailwind, Bootstrap, etc.).
-- **Vanilla JavaScript (ES6+)**: Handles all application logic, DOM manipulation, and state persistence. No frameworks (no React, Vue, Node.js).
-- **Chart.js (via CDN)**: For rendering the daily bar charts, budget donuts, and cumulative trend lines.
+## Android APK Build (Capacitor)
 
-## How to Run
+To package Budgetier as a standalone offline Android app:
 
-1. Clone or download this repository to your local machine.
-2. Double-click the `index.html` file to open it in your default web browser.
-3. Start tracking your budget!
+### 1. Initialize Capacitor
+```bash
+npm init -y
+npm install @capacitor/core @capacitor/cli @capacitor/android
+npx cap init "Budgetier" "com.xen.budgetier" --web-dir .
+npx cap add android
+```
 
+### 2. Configure `capacitor.config.json`
+```json
+{
+  "appId": "com.xen.budgetier",
+  "appName": "Budgetier",
+  "webDir": ".",
+  "bundledWebRuntime": false
+}
+```
 
-## Live Demo: 
- https://arnabbiswas100.github.io/xen-budgetier/
+### 3. Sync & Open in Android Studio
+```bash
+npx cap copy
+npx cap sync
+npx cap open android
+```
+
+### 4. Build Signed Release APK
+In Android Studio:
+1. Go to **Build** → **Generate Signed Bundle / APK**.
+2. Select **APK**.
+3. Create or specify your Release Keystore (`.jks`).
+4. Select build variant `release` and click **Create**.
+5. Your signed APK will be generated under `android/app/release/app-release.apk`.
+
+---
+
+## Running in the Browser
+
+Open `index.html` directly in any modern browser:
+```bash
+open index.html
+# Or serve with any lightweight static server:
+npx serve .
+```

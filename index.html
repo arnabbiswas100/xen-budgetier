@@ -8,20 +8,23 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="description" content="Personal Budget Tracker — track your monthly spending, set budgets, and gain financial insights." />
-  <title>Xen-Budgetier — Personal Finance Dashboard</title>
+  <meta name="description" content="Budgetier — Personal finance and budget tracker. Set budgets, log daily expenses, and gain financial insights." />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;" />
+  <title>Budgetier — Personal Finance Dashboard</title>
+  <link rel="icon" type="image/png" href="icon-192.png" />
+  <link rel="apple-touch-icon" href="icon-512.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="chart.umd.min.js"></script>
 </head>
 <body>
 
 <!-- ===== TOP NAV ===== -->
 <header class="top-nav" role="banner">
   <div class="nav-brand">
-    <span class="nav-title">Xen-Budgetier</span>
+    <span class="nav-title">Budgetier</span>
   </div>
   <nav class="nav-tabs" role="navigation" aria-label="Main navigation">
     <button class="nav-tab active" data-tab="dashboard" id="tab-dashboard">Dashboard</button>
@@ -126,30 +129,33 @@
       <div class="summary-grid" id="summary-grid"></div>
     </div>
 
-    <!-- Insights -->
-    <div class="insights-section" role="region" aria-label="Financial insights">
-      <h2 class="section-title">Insights</h2>
-      <ul class="insights-list" id="insights-list">
-        <li class="insight-item insight-neutral">Add your budget and start tracking to see insights.</li>
-      </ul>
-    </div>
-
-    <!-- Category Analysis -->
-    <div class="category-section" role="region" aria-label="Spending by category">
-      <div class="section-header">
-        <h2 class="section-title">Spending by Category</h2>
-        <button class="btn btn-ghost btn-sm" id="manage-cat-budgets-btn">Manage Limits</button>
+    <!-- Dashboard Sections Split (2-col grid on tablet/desktop, stacked on mobile) -->
+    <div class="dashboard-sections-split">
+      <!-- Insights -->
+      <div class="insights-section" role="region" aria-label="Financial insights">
+        <h2 class="section-title">Insights</h2>
+        <ul class="insights-list" id="insights-list">
+          <li class="insight-item insight-neutral">Add your budget and start tracking to see insights.</li>
+        </ul>
       </div>
-      <div class="category-list" id="category-list">
-        <p class="empty-state">No expenses yet. Add an expense to see category breakdown.</p>
-      </div>
-    </div>
 
-    <!-- Daily Heatmap -->
-    <div class="daily-section" role="region" aria-label="Daily spending heatmap">
-      <h2 class="section-title">Daily Spending</h2>
-      <div class="heatmap-wrap" id="heatmap-wrap">
-        <p class="empty-state">No expenses for this month yet.</p>
+      <!-- Category Analysis -->
+      <div class="category-section" role="region" aria-label="Spending by category">
+        <div class="section-header">
+          <h2 class="section-title">Spending by Category</h2>
+          <button class="btn btn-ghost btn-sm" id="manage-cat-budgets-btn">Manage Limits</button>
+        </div>
+        <div class="category-list" id="category-list">
+          <p class="empty-state">No expenses yet. Add an expense to see category breakdown.</p>
+        </div>
+      </div>
+
+      <!-- Daily Heatmap -->
+      <div class="daily-section" role="region" aria-label="Daily spending heatmap">
+        <h2 class="section-title">Daily Spending</h2>
+        <div class="heatmap-wrap" id="heatmap-wrap">
+          <p class="empty-state">No expenses for this month yet.</p>
+        </div>
       </div>
     </div>
 
@@ -277,8 +283,8 @@
         <h3 class="settings-card-title danger-title">Data Management</h3>
         <p class="settings-desc">Export, import, or clear your local data.</p>
         <div class="data-btn-row">
-          <button class="btn btn-ghost btn-sm" id="export-json-btn">Export JSON</button>
-          <button class="btn btn-ghost btn-sm" id="export-csv-btn">Export CSV</button>
+          <button class="btn btn-ghost btn-sm" id="export-json-btn">Export JSON (Full Backup)</button>
+          <button class="btn btn-ghost btn-sm" id="export-csv-btn">Export Month (CSV)</button>
           <label class="btn btn-ghost btn-sm" for="import-file-input" style="cursor:pointer">Import JSON</label>
           <input type="file" id="import-file-input" accept=".json" style="display:none" aria-label="Import JSON file" />
         </div>
@@ -311,8 +317,8 @@
             <input type="date" id="expense-date" class="text-input" required aria-required="true" />
           </div>
           <div class="form-group">
-            <label class="form-label" for="expense-amount">Amount (₹) <span aria-hidden="true">*</span></label>
-            <input type="number" id="expense-amount" class="text-input" placeholder="0" min="0" step="0.01" required aria-required="true" />
+            <label class="form-label" for="expense-amount">Amount (<span class="currency-label-sym">₹</span>) <span aria-hidden="true">*</span></label>
+            <input type="number" id="expense-amount" class="text-input" placeholder="0" min="0" step="0.01" inputmode="decimal" required aria-required="true" />
           </div>
         </div>
 
@@ -361,8 +367,8 @@
     <div class="modal-body">
       <form id="budget-form" novalidate>
         <div class="form-group">
-          <label class="form-label" for="budget-input">Budget Amount (₹)</label>
-          <input type="number" id="budget-input" class="text-input" placeholder="e.g. 20000" min="0" step="1" aria-label="Monthly budget amount" />
+          <label class="form-label" for="budget-input">Budget Amount (<span class="currency-label-sym">₹</span>)</label>
+          <input type="number" id="budget-input" class="text-input" placeholder="e.g. 20000" min="0" step="1" inputmode="decimal" aria-label="Monthly budget amount" />
         </div>
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" id="cancel-budget-btn">Cancel</button>
@@ -420,17 +426,21 @@
 <!-- Mobile Bottom Navigation -->
 <nav class="mobile-bottom-nav" id="mobile-bottom-nav" role="navigation" aria-label="Mobile navigation">
   <button class="mbn-btn active" data-tab="dashboard" id="mbn-dashboard" aria-label="Dashboard">
-    <svg class="mbn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/>
-      <rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/>
-    </svg>
+    <span class="mbn-icon-wrap">
+      <svg class="mbn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/>
+        <rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/>
+      </svg>
+    </span>
     <span class="mbn-label">Home</span>
   </button>
   <button class="mbn-btn" data-tab="expenses" id="mbn-expenses" aria-label="Expenses">
-    <svg class="mbn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-      <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
-      <circle cx="3" cy="6" r="0.8" fill="currentColor"/><circle cx="3" cy="12" r="0.8" fill="currentColor"/><circle cx="3" cy="18" r="0.8" fill="currentColor"/>
-    </svg>
+    <span class="mbn-icon-wrap">
+      <svg class="mbn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+        <circle cx="3" cy="6" r="0.8" fill="currentColor"/><circle cx="3" cy="12" r="0.8" fill="currentColor"/><circle cx="3" cy="18" r="0.8" fill="currentColor"/>
+      </svg>
+    </span>
     <span class="mbn-label">Expenses</span>
   </button>
   <button class="mbn-btn mbn-add-btn" id="mbn-add-btn" aria-label="Add expense">
@@ -439,17 +449,21 @@
     </svg>
   </button>
   <button class="mbn-btn" data-tab="analytics" id="mbn-analytics" aria-label="Analytics">
-    <svg class="mbn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-      <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
-      <line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/>
-    </svg>
+    <span class="mbn-icon-wrap">
+      <svg class="mbn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+        <line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/>
+      </svg>
+    </span>
     <span class="mbn-label">Analytics</span>
   </button>
   <button class="mbn-btn" data-tab="settings" id="mbn-settings" aria-label="Settings">
-    <svg class="mbn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-    </svg>
+    <span class="mbn-icon-wrap">
+      <svg class="mbn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </span>
     <span class="mbn-label">Settings</span>
   </button>
 </nav>
@@ -485,8 +499,4 @@
 <script src="script.js"></script>
 </body>
 </html>
-
-#Preview {
-    Text("Provide a View to preview")
-}
 
