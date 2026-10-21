@@ -10,3 +10,5 @@ android/app/release/
 
 *.jks
 *.keystore
+
+*.apk
