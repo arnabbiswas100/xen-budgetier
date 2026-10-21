@@ -8,6 +8,5 @@ android/.gradle/
 android/local.properties
 android/app/release/
 
-*.apk
 *.jks
 *.keystore
