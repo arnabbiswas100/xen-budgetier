@@ -1,6 +1,6 @@
 # Budgetier
 
-A beautiful, glassmorphic personal finance and budget tracking application designed for students and everyday budgeting. Built with 100% client-side technologies, it operates completely offline with zero backend, zero trackers, and zero cloud lock-in.
+A beautiful, material themed personal finance and budget tracking application designed for students and everyday budgeting. Built with 100% client-side technologies, it operates completely offline with zero backend, zero trackers, and zero cloud lock-in.
 
 ---
 
